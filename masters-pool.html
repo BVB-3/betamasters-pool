@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Masters Pool 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #1a3d2b;
+    --green-mid: #2d6a4f;
+    --green-light: #52b788;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f9f5ed;
+    --cream-dark: #ede8dc;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-muted: #888;
+    --white: #ffffff;
+    --red: #c0392b;
+    --under: #1a6b3c;
+    --over: #c0392b;
+    --radius: 6px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--green);
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.02) 60px,
+      rgba(255,255,255,0.02) 61px
+    );
+  }
+  .header-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    position: relative;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+    position: relative;
+    font-weight: 300;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--green-mid);
+    padding: 8px 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.04em;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #aaa;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .status-dot.connected { background: #52b788; }
+  .status-dot.error { background: var(--red); }
+
+  /* NAV TABS */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--cream-dark);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  nav button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 14px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--green); border-bottom-color: var(--gold); }
+
+  /* MAIN */
+  main { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* SETUP NOTICE */
+  .setup-notice {
+    background: #fff8e6;
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #5a4200;
+  }
+  .setup-notice strong { color: #3a2900; }
+  .setup-notice code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: monospace;
+  }
+  .setup-notice ol { padding-left: 1.2rem; margin-top: 8px; }
+  .setup-notice li { margin-bottom: 4px; }
+
+  /* METRICS */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .metric {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .metric-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .metric-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--green);
+    margin-bottom: 1rem;
+  }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  thead { background: var(--green); }
+  thead th {
+    color: rgba(255,255,255,0.75);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    text-align: left;
+  }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--cream-dark); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f7f4ee; }
+  tbody tr.leader-row { background: #f0faf4; }
+  tbody tr.leader-row td:first-child { border-left: 3px solid var(--gold); }
+
+  .rank-num { font-weight: 600; color: var(--text-muted); font-size: 13px; }
+  .participant-name { font-weight: 500; }
+  .score-under { color: var(--under); font-weight: 600; }
+  .score-over { color: var(--over); font-weight: 600; }
+  .score-even { color: var(--text-muted); font-weight: 500; }
+
+  .picks-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+  .pick-chip {
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    border: 1px solid var(--cream-dark);
+    background: var(--cream);
+    color: var(--text-mid);
+  }
+  .pick-chip.active { border-color: #52b788; color: #1a6b3c; background: #edf7f1; }
+  .pick-chip.cut { text-decoration: line-through; color: var(--text-muted); background: #f5f5f5; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .card-title { font-weight: 500; font-size: 15px; margin-bottom: 12px; color: var(--text); }
+
+  /* FORMS */
+  .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  input[type=text], input[type=number], select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--green-mid); }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border: 1px solid #ccc;
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:hover { background: var(--cream-dark); }
+  .btn-green { background: var(--green); color: var(--white); border-color: var(--green); }
+  .btn-green:hover { background: var(--green-mid); border-color: var(--green-mid); }
+  .btn-danger { color: var(--red); border-color: transparent; background: transparent; font-size: 12px; padding: 4px 8px; }
+  .btn-danger:hover { background: #fdf0ef; }
+
+  .entry-pick-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cream-dark); font-size: 13.5px; }
+  .entry-pick-row:last-of-type { border-bottom: none; }
+
+  .badge { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
+  .badge-active { background: #edf7f1; color: #1a6b3c; border: 1px solid #a8ddc0; }
+  .badge-cut { background: #fdf0ef; color: var(--red); border: 1px solid #f3b8b3; }
+  .badge-wd { background: #f5f5f5; color: var(--text-muted); border: 1px solid #ddd; }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 14px; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6; }
+
+  /* loading */
+  .loading { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 14px; }
+
+  @media (max-width: 600px) {
+    nav button { padding: 12px 14px; font-size: 12px; }
+    thead th, tbody td { padding: 10px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Augusta National &bull; April 2025</div>
+  <h1>Masters Pool</h1>
+  <div class="header-sub">Live leaderboard &bull; Real-time sync</div>
+</header>
+
+<div class="status-bar">
+  <div class="status-dot" id="status-dot"></div>
+  <span id="status-text">Connecting…</span>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('leaderboard')">Leaderboard</button>
+  <button onclick="showTab('entries')">Entries</button>
+  <button onclick="showTab('golfers')">Golfer scores</button>
+  <button onclick="showTab('setup')">Setup</button>
+</nav>
+
+<main>
+
+  <!-- LEADERBOARD -->
+  <div id="tab-leaderboard" class="tab-content active">
+    <div class="metrics" id="metrics">
+      <div class="metric"><div class="metric-label">Entries</div><div class="metric-value" id="m-entries">—</div></div>
+      <div class="metric"><div class="metric-label">Golfers</div><div class="metric-value" id="m-golfers">—</div></div>
+      <div class="metric"><div class="metric-label">Leader</div><div class="metric-value" id="m-leader" style="font-size:16px;padding-top:3px">—</div></div>
+      <div class="metric"><div class="metric-label">Leader score</div><div class="metric-value" id="m-score">—</div></div>
+    </div>
+    <div class="section-title">Standings</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>Participant</th>
+            <th style="text-align:right">Best 2 score</th>
+          </tr>
+        </thead>
+        <tbody id="lb-body"><tr><td colspan="3" class="loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin-top:12px">Scoring: best 2 of 5 picks count. Cut/WD golfers are excluded.</p>
+  </div>
+
+  <!-- ENTRIES -->
+  <div id="tab-entries" class="tab-content">
+    <div class="card">
+      <div class="card-title">Add participant</div>
+      <div class="form-row">
+        <input type="text" id="entry-name" placeholder="Name" style="width:200px" />
+        <button class="btn btn-green" onclick="addEntry()">Add</button>
+      </div>
+      <p class="hint">Each participant picks up to 5 golfers. Best 2 scores count.</p>
+    </div>
+    <div class="section-title">All entries</div>
+    <div id="entries-list"><div class="loading">Loading…</div></div>
+  </div>
+
+  <!-- GOLFERS -->
+  <div id="tab-golfers" class="tab-content">
+    <div class="card">
+      <div class="card-title">Add / update golfer</div>
+      <div class="form-row">
+        <input type="text" id="g-name" placeholder="Golfer name" style="width:200px" />
+        <input type="number" id="g-score" placeholder="Score (e.g. -10)" style="width:130px" />
+        <select id="g-status">
+          <option value="active">Active</option>
+          <option value="cut">Cut</option>
+          <option value="wd">WD</option>
+        </select>
+        <button class="btn btn-green" onclick="upsertGolfer()">Save</button>
+      </div>
+      <p class="hint">Enter score as a number (e.g. -10 for 10 under, 3 for 3 over, 0 for even). Updates sync instantly for everyone.</p>
+    </div>
+    <div class="section-title">Field</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Golfer</th><th style="text-align:right">Score</th><th>Status</th></tr></thead>
+        <tbody id="golfer-body"><tr><td colspan="4" class="loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="tab-setup" class="tab-content">
+    <div class="setup-notice">
+      <strong>One-time Firebase setup (5 minutes, free)</strong>
+      <ol>
+        <li>Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> and create a new project (any name).</li>
+        <li>In the project, click <strong>Firestore Database</strong> → <strong>Create database</strong> → choose <strong>Start in test mode</strong> → pick any region.</li>
+        <li>Go to <strong>Project Settings</strong> (gear icon) → <strong>Your apps</strong> → click the <strong>&lt;/&gt;</strong> (web) icon → register the app.</li>
+        <li>Copy the <code>firebaseConfig</code> object shown and paste it into this file, replacing the placeholder at the bottom of the <code>&lt;script&gt;</code> section (search for <code>PASTE YOUR FIREBASE CONFIG HERE</code>).</li>
+        <li>Save the file, push to GitHub, enable <strong>GitHub Pages</strong> (Settings → Pages → Deploy from main branch), and share the URL.</li>
+      </ol>
+      <br/>
+      <strong>Sharing scores:</strong> Only you need to update golfer scores in the Golfer scores tab — everyone else sees updates live.
+    </div>
+    <div class="card">
+      <div class="card-title">Pool rules</div>
+      <p style="font-size:14px;line-height:1.8;color:var(--text-mid)">
+        Each participant selects up to <strong>5 golfers</strong>. Their <strong>best 2</strong> scores count toward their pool total. Golfers who miss the cut or withdraw are excluded. Lowest total score wins.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ─────────────────────────────────────────────────
+  // PASTE YOUR FIREBASE CONFIG HERE
+  // Replace this object with the one from Firebase console
+  const firebaseConfig = {
+    apiKey: "AIzaSyD_MKFcwfpvEVWrZDDHFRhDDWXtdolCiWs",
+    authDomain: "masters-pool-5afa3.firebaseapp.com",
+    projectId: "masters-pool-5afa3",
+    storageBucket: "masters-pool-5afa3.firebasestorage.app",
+    messagingSenderId: "845892818359",
+    appId: "1:845892818359:web:1ac202e79c380820600432",
+    measurementId: "G-3G7Q2ZBSJC"
+  };
+  // ─────────────────────────────────────────────────
+
+  let app, db;
+  let golfers = {};
+  let entries = {};
+
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    setStatus('connected', 'Live — syncing in real time');
+  } catch(e) {
+    setStatus('error', 'Firebase not configured — see Setup tab');
+    useDemoData();
+  }
+
+  function setStatus(state, msg) {
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    dot.className = 'status-dot ' + state;
+    txt.textContent = msg;
+  }
+
+  // ── REAL-TIME LISTENERS ───────────────────────────
+  if (db) {
+    onSnapshot(collection(db, 'golfers'), snap => {
+      golfers = {};
+      snap.forEach(d => { golfers[d.id] = d.data(); });
+      render();
+    }, () => { setStatus('error', 'Connection error'); useDemoData(); });
+
+    onSnapshot(collection(db, 'entries'), snap => {
+      entries = {};
+      snap.forEach(d => { entries[d.id] = d.data(); });
+      render();
+    });
+  }
+
+  // ── DEMO DATA (shown before Firebase is configured) ─
+  function useDemoData() {
+    golfers = {
+      'Scottie Scheffler': { score: -11, status: 'active' },
+      'Rory McIlroy':      { score: -9,  status: 'active' },
+      'Collin Morikawa':   { score: -8,  status: 'active' },
+      'Tommy Fleetwood':   { score: -7,  status: 'active' },
+      'Ludvig Åberg':      { score: -6,  status: 'active' },
+      'Brooks Koepka':     { score: -5,  status: 'active' },
+      'Bryson DeChambeau': { score: -4,  status: 'active' },
+      'Jon Rahm':          { score: -3,  status: 'active' },
+      'Xander Schauffele': { score: -2,  status: 'active' },
+      'Justin Thomas':     { score: -1,  status: 'active' },
+      'Dustin Johnson':    { score:  0,  status: 'active' },
+      'Jordan Spieth':     { score:  2,  status: 'active' },
+      'Patrick Cantlay':   { score:  4,  status: 'cut'    },
+    };
+    entries = {
+      'Bennett': { picks: ['Scottie Scheffler','Rory McIlroy','Collin Morikawa','Tommy Fleetwood','Bryson DeChambeau'] },
+      'Maddie':  { picks: ['Scottie Scheffler','Jon Rahm','Xander Schauffele','Brooks Koepka','Jordan Spieth'] },
+    };
+    render();
+  }
+
+  // ── HELPERS ───────────────────────────────────────
+  function fmtScore(s) {
+    if (s === 0) return '<span class="score-even">E</span>';
+    if (s < 0)  return `<span class="score-under">${s}</span>`;
+    return `<span class="score-over">+${s}</span>`;
+  }
+
+  function entryResult(entry) {
+    const active = (entry.picks || []).map(p => {
+      const g = golfers[p];
+      return g && g.status === 'active' ? g.score : null;
+    }).filter(s => s !== null).sort((a,b)=>a-b);
+    const best2 = active.slice(0,2);
+    return { total: best2.reduce((a,b)=>a+b,0), used: best2.length };
+  }
+
+  // ── RENDER ────────────────────────────────────────
+  function render() {
+    renderLeaderboard();
+    if (document.getElementById('tab-entries').classList.contains('active')) renderEntries();
+    if (document.getElementById('tab-golfers').classList.contains('active')) renderGolfers();
+  }
+
+  function renderLeaderboard() {
+    const sorted = Object.entries(entries)
+      .map(([name, e]) => ({ name, ...entryResult(e), picks: e.picks || [] }))
+      .sort((a,b) => a.total - b.total);
+
+    document.getElementById('m-entries').textContent = sorted.length;
+    document.getElementById('m-golfers').textContent = Object.keys(golfers).length;
+    if (sorted.length) {
+      document.getElementById('m-leader').textContent = sorted[0].name;
+      const s = sorted[0].total;
+      document.getElementById('m-score').innerHTML = fmtScore(s);
+    } else {
+      document.getElementById('m-leader').textContent = '—';
+      document.getElementById('m-score').textContent = '—';
+    }
+
+    const body = document.getElementById('lb-body');
+    if (!sorted.length) { body.innerHTML = '<tr><td colspan="3" class="empty">No entries yet</td></tr>'; return; }
+
+    body.innerHTML = sorted.map((e,i) => {
+      const chips = e.picks.map(p => {
+        const g = golfers[p];
+        const s = g ? (g.score === 0 ? 'E' : (g.score > 0 ? '+'+g.score : g.score)) : '?';
+        const cls = !g ? '' : g.status === 'active' ? 'active' : 'cut';
+        return `<span class="pick-chip ${cls}">${p}&nbsp;(${s})</span>`;
+      }).join('');
+      return `<tr class="${i===0?'leader-row':''}">
+        <td class="rank-num">${i+1}</td>
+        <td>
+          <div class="participant-name">${e.name}</div>
+          <div class="picks-row">${chips}</div>
+        </td>
+        <td style="text-align:right;white-space:nowrap">${fmtScore(e.total)} <span style="font-size:11px;color:var(--text-muted)">(${e.used} picks)</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderEntries() {
+    const list = document.getElementById('entries-list');
+    const eArr = Object.entries(entries);
+    if (!eArr.length) { list.innerHTML = '<div class="empty">No entries yet.</div>'; return; }
+
+    list.innerHTML = eArr.map(([name, e]) => {
+      const picks = e.picks || [];
+      const pickRows = picks.map((p,pi) => {
+        const g = golfers[p];
+        const s = g ? (g.score === 0 ? 'E' : (g.score > 0 ? '+'+g.score : g.score)) : '?';
+        const status = g ? g.status : 'unknown';
+        return `<div class="entry-pick-row">
+          <span>${p} <span style="color:var(--text-muted);font-size:12px">(${s}${status!=='active'?' &bull; '+status.toUpperCase():''})</span></span>
+          <button class="btn btn-danger" onclick="removePick('${esc(name)}','${esc(p)}')">Remove</button>
+        </div>`;
+      }).join('');
+
+      const availOpts = Object.entries(golfers)
+        .filter(([gn]) => !picks.includes(gn))
+        .sort(([,a],[,b]) => a.score - b.score)
+        .map(([gn,g]) => `<option value="${esc(gn)}">${gn} (${g.score===0?'E':g.score>0?'+'+g.score:g.score})</option>`)
+        .join('');
+
+      const canAdd = picks.length < 5;
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div class="card-title" style="margin:0">${name} <span style="font-size:12px;font-weight:400;color:var(--text-muted)">${picks.length}/5 picks</span></div>
+          <button class="btn btn-danger" onclick="removeEntry('${esc(name)}')">Remove entry</button>
+        </div>
+        ${pickRows || '<div style="font-size:13px;color:var(--text-muted);padding:6px 0">No picks yet</div>'}
+        ${canAdd ? `<div class="form-row" style="margin-top:12px">
+          <select id="psel-${esc(name)}" style="flex:1;min-width:160px"><option value="">— select golfer —</option>${availOpts}</select>
+          <button class="btn btn-green" onclick="addPick('${esc(name)}')">Add pick</button>
+        </div>` : '<p class="hint" style="margin-top:8px">5 picks max reached.</p>'}
+      </div>`;
+    }).join('');
+  }
+
+  function renderGolfers() {
+    const sorted = Object.entries(golfers).sort(([,a],[,b])=>a.score-b.score);
+    const body = document.getElementById('golfer-body');
+    if (!sorted.length) { body.innerHTML = '<tr><td colspan="4" class="empty">No golfers yet</td></tr>'; return; }
+    body.innerHTML = sorted.map(([name,g],i) => {
+      const badgeCls = g.status === 'active' ? 'badge-active' : g.status === 'cut' ? 'badge-cut' : 'badge-wd';
+      return `<tr>
+        <td class="rank-num">${i+1}</td>
+        <td>${name}</td>
+        <td style="text-align:right">${fmtScore(g.score)}</td>
+        <td><span class="badge ${badgeCls}">${g.status.toUpperCase()}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── ACTIONS ───────────────────────────────────────
+  window.addEntry = async function() {
+    const n = document.getElementById('entry-name').value.trim();
+    if (!n) return;
+    if (entries[n]) { alert('Name already exists'); return; }
+    if (db) {
+      await setDoc(doc(db,'entries',n), { picks: [] });
+    } else {
+      entries[n] = { picks: [] };
+      renderEntries();
+    }
+    document.getElementById('entry-name').value = '';
+  };
+
+  window.removeEntry = async function(name) {
+    if (!confirm(`Remove ${name}?`)) return;
+    if (db) await deleteDoc(doc(db,'entries',name));
+    else { delete entries[name]; render(); }
+  };
+
+  window.addPick = async function(entryName) {
+    const sel = document.getElementById('psel-'+entryName);
+    if (!sel || !sel.value) return;
+    const e = entries[entryName] || { picks: [] };
+    const picks = [...(e.picks||[]), sel.value];
+    if (db) await setDoc(doc(db,'entries',entryName), { picks });
+    else { entries[entryName].picks = picks; render(); }
+  };
+
+  window.removePick = async function(entryName, golferName) {
+    const e = entries[entryName];
+    if (!e) return;
+    const picks = (e.picks||[]).filter(p=>p!==golferName);
+    if (db) await setDoc(doc(db,'entries',entryName), { picks });
+    else { entries[entryName].picks = picks; render(); }
+  };
+
+  window.upsertGolfer = async function() {
+    const name = document.getElementById('g-name').value.trim();
+    const score = parseInt(document.getElementById('g-score').value);
+    const status = document.getElementById('g-status').value;
+    if (!name || isNaN(score)) { alert('Enter a name and score'); return; }
+    if (db) await setDoc(doc(db,'golfers',name), { score, status });
+    else { golfers[name] = { score, status }; render(); }
+    document.getElementById('g-name').value = '';
+    document.getElementById('g-score').value = '';
+  };
+
+  // ── TAB SWITCHING ─────────────────────────────────
+  window.showTab = function(id) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-'+id).classList.add('active');
+    const tabs = ['leaderboard','entries','golfers','setup'];
+    document.querySelectorAll('nav button')[tabs.indexOf(id)].classList.add('active');
+    if (id==='entries') renderEntries();
+    if (id==='golfers') renderGolfers();
+  };
+
+  function esc(s) { return s.replace(/'/g,"\\'"); }
+</script>
+
+</body>
+</html>
