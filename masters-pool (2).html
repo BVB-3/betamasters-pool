@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Masters Pool 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #1a3d2b;
+    --green-mid: #2d6a4f;
+    --green-light: #52b788;
+    --gold: #c9a84c;
+    --cream: #f9f5ed;
+    --cream-dark: #ede8dc;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-muted: #888;
+    --white: #ffffff;
+    --red: #c0392b;
+    --under: #1a6b3c;
+    --over: #c0392b;
+    --radius: 6px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+    --t1: #7b4f00;
+    --t1bg: #fff8e6;
+    --t1border: #e8c97a;
+    --t2: #1a3d2b;
+    --t2bg: #edf7f1;
+    --t2border: #a8ddc0;
+    --t3: #1a3060;
+    --t3bg: #e8f0fb;
+    --t3border: #a8c0e8;
+    --t4: #5a1a5a;
+    --t4bg: #f7eef7;
+    --t4border: #d0a8d0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--green);
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.02) 60px,rgba(255,255,255,0.02) 61px);
+  }
+  .header-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; position: relative; }
+  header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,6vw,3.2rem); font-weight: 700; color: var(--white); line-height: 1.1; position: relative; }
+  .header-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 8px; position: relative; font-weight: 300; }
+
+  .status-bar { background: var(--green-mid); padding: 8px 1.5rem; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.7); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; flex-shrink: 0; transition: background 0.3s; }
+  .status-dot.connected { background: #52b788; }
+  .status-dot.error { background: var(--red); }
+
+  nav { background: var(--white); border-bottom: 1px solid var(--cream-dark); display: flex; justify-content: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px rgba(0,0,0,0.06); overflow-x: auto; }
+  nav button { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 14px 20px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--green); border-bottom-color: var(--gold); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 12px; margin-bottom: 2rem; }
+  .metric { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 1rem 1.25rem; box-shadow: var(--shadow); }
+  .metric-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .metric-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--green); }
+
+  .section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--green); margin-bottom: 1rem; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  thead { background: var(--green); }
+  thead th { color: rgba(255,255,255,0.75); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 14px; text-align: left; }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--cream-dark); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f7f4ee; }
+  tbody tr.leader-row { background: #f0faf4; }
+  tbody tr.leader-row td:first-child { border-left: 3px solid var(--gold); }
+
+  .rank-num { font-weight: 600; color: var(--text-muted); font-size: 13px; }
+  .score-under { color: var(--under); font-weight: 600; }
+  .score-over { color: var(--over); font-weight: 600; }
+  .score-even { color: var(--text-muted); font-weight: 500; }
+
+  .picks-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+  .pick-chip { font-size: 11px; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--cream-dark); background: var(--cream); color: var(--text-mid); }
+  .pick-chip.active { border-color: #52b788; color: #1a6b3c; background: #edf7f1; }
+  .pick-chip.cut { text-decoration: line-through; color: var(--text-muted); background: #f5f5f5; }
+
+  /* tier badges */
+  .tier-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 99px; margin-right: 4px; }
+  .tier-1 { background: var(--t1bg); color: var(--t1); border: 1px solid var(--t1border); }
+  .tier-2 { background: var(--t2bg); color: var(--t2); border: 1px solid var(--t2border); }
+  .tier-3 { background: var(--t3bg); color: var(--t3); border: 1px solid var(--t3border); }
+  .tier-4 { background: var(--t4bg); color: var(--t4); border: 1px solid var(--t4border); }
+
+  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow); }
+  .card-title { font-weight: 500; font-size: 15px; margin-bottom: 12px; color: var(--text); }
+
+  .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  input[type=text], input[type=number], select { font-family: 'DM Sans', sans-serif; font-size: 13.5px; padding: 8px 12px; border: 1px solid #ddd; border-radius: var(--radius); background: var(--white); color: var(--text); outline: none; transition: border-color 0.2s; }
+  input:focus, select:focus { border-color: var(--green-mid); }
+
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; padding: 8px 18px; border: 1px solid #ccc; border-radius: var(--radius); background: var(--white); color: var(--text); cursor: pointer; transition: background 0.15s; }
+  .btn:hover { background: var(--cream-dark); }
+  .btn-green { background: var(--green); color: var(--white); border-color: var(--green); }
+  .btn-green:hover { background: var(--green-mid); }
+  .btn-danger { color: var(--red); border-color: transparent; background: transparent; font-size: 12px; padding: 4px 8px; }
+  .btn-danger:hover { background: #fdf0ef; }
+
+  .entry-pick-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cream-dark); font-size: 13.5px; }
+  .entry-pick-row:last-of-type { border-bottom: none; }
+
+  .badge { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
+  .badge-active { background: #edf7f1; color: #1a6b3c; border: 1px solid #a8ddc0; }
+  .badge-cut { background: #fdf0ef; color: var(--red); border: 1px solid #f3b8b3; }
+  .badge-wd { background: #f5f5f5; color: var(--text-muted); border: 1px solid #ddd; }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 14px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6; }
+  .loading { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 14px; }
+
+  /* tier section in pick UI */
+  .tier-section { margin-bottom: 1.5rem; }
+  .tier-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--cream-dark); }
+  .tier-header-label { font-weight: 500; font-size: 14px; }
+  .tier-header-sub { font-size: 12px; color: var(--text-muted); }
+  .tier-progress { font-size: 12px; font-weight: 600; }
+  .golfer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+  .golfer-option { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--cream-dark); border-radius: var(--radius); cursor: pointer; font-size: 13px; transition: background 0.15s, border-color 0.15s; background: var(--white); }
+  .golfer-option:hover { background: var(--cream); }
+  .golfer-option.selected { border-color: var(--green-mid); background: #edf7f1; }
+  .golfer-option.disabled { opacity: 0.4; cursor: not-allowed; }
+  .golfer-option input[type=checkbox] { accent-color: var(--green); width: 15px; height: 15px; flex-shrink: 0; }
+  .golfer-score { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+
+  @media (max-width: 600px) {
+    nav button { padding: 12px 12px; font-size: 12px; }
+    .golfer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Augusta National &bull; April 2025</div>
+  <h1>Masters Pool</h1>
+  <div class="header-sub">Pick 8 &bull; Best 4 count &bull; Live sync</div>
+</header>
+
+<div class="status-bar">
+  <div class="status-dot" id="status-dot"></div>
+  <span id="status-text">Connecting…</span>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('leaderboard')">Leaderboard</button>
+  <button onclick="showTab('entries')">Entries</button>
+  <button onclick="showTab('golfers')">Golfer scores</button>
+  <button onclick="showTab('rules')">Rules</button>
+</nav>
+
+<main>
+
+  <!-- LEADERBOARD -->
+  <div id="tab-leaderboard" class="tab-content active">
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Entries</div><div class="metric-value" id="m-entries">—</div></div>
+      <div class="metric"><div class="metric-label">Golfers tracked</div><div class="metric-value" id="m-golfers">—</div></div>
+      <div class="metric"><div class="metric-label">Leader</div><div class="metric-value" id="m-leader" style="font-size:16px;padding-top:3px">—</div></div>
+      <div class="metric"><div class="metric-label">Leader score</div><div class="metric-value" id="m-score">—</div></div>
+    </div>
+    <div class="section-title">Standings</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:36px">#</th><th>Participant</th><th style="text-align:right">Best 4 score</th></tr></thead>
+        <tbody id="lb-body"><tr><td colspan="3" class="loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin-top:12px">Scoring: best 4 of 8 picks count. Cut/WD golfers are excluded from scoring.</p>
+  </div>
+
+  <!-- ENTRIES -->
+  <div id="tab-entries" class="tab-content">
+    <div class="card">
+      <div class="card-title">Add participant</div>
+      <div class="form-row">
+        <input type="text" id="entry-name" placeholder="Name" style="width:200px" />
+        <button class="btn btn-green" onclick="addEntry()">Add</button>
+      </div>
+      <p class="hint">Pick 3 from Tier 1, 2 from Tier 2, 2 from Tier 3, 1 from Tier 4. Best 4 scores count.</p>
+    </div>
+    <div class="section-title">All entries</div>
+    <div id="entries-list"><div class="loading">Loading…</div></div>
+  </div>
+
+  <!-- GOLFERS -->
+  <div id="tab-golfers" class="tab-content">
+    <div class="card" style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="card-title" style="margin-bottom:4px">Quick score editor</div>
+          <p class="hint" style="margin:0">Edit scores inline — click Save all to push updates to everyone.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="save-status" style="font-size:12px;color:var(--text-muted)"></span>
+          <button class="btn btn-green" onclick="saveAllScores()">Save all scores</button>
+        </div>
+      </div>
+    </div>
+    <div id="golfer-tiers"></div>
+  </div>
+
+  <!-- RULES -->
+  <div id="tab-rules" class="tab-content">
+    <div class="card">
+      <div class="card-title">How the pool works</div>
+      <p style="font-size:14px;line-height:1.9;color:var(--text-mid)">
+        Each participant picks <strong>8 golfers</strong> across 4 tiers. Their <strong>best 4 scores</strong> count toward the final total. Golfers who miss the cut or withdraw score nothing. <strong>Lowest total wins.</strong>
+      </p>
+      <br/>
+      <table style="font-size:13px;box-shadow:none;border:1px solid var(--cream-dark)">
+        <thead><tr><th>Tier</th><th>Odds range</th><th>Picks required</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier-badge tier-1">Tier 1</span></td><td>5/1 – 55/1</td><td>Pick 3</td></tr>
+          <tr><td><span class="tier-badge tier-2">Tier 2</span></td><td>70/1 – 125/1</td><td>Pick 2</td></tr>
+          <tr><td><span class="tier-badge tier-3">Tier 3</span></td><td>150/1 – 250/1</td><td>Pick 2</td></tr>
+          <tr><td><span class="tier-badge tier-4">Tier 4</span></td><td>300/1 – 2500/1</td><td>Pick 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_MKFcwfpvEVWrZDDHFRhDDWXtdolCiWs",
+  authDomain: "masters-pool-5afa3.firebaseapp.com",
+  projectId: "masters-pool-5afa3",
+  storageBucket: "masters-pool-5afa3.firebasestorage.app",
+  messagingSenderId: "845892818359",
+  appId: "1:845892818359:web:1ac202e79c380820600432",
+  measurementId: "G-3G7Q2ZBSJC"
+};
+
+// Tier definitions
+const TIERS = {
+  1: { label: "Tier 1", range: "5/1 – 55/1", max: 3 },
+  2: { label: "Tier 2", range: "70/1 – 125/1", max: 2 },
+  3: { label: "Tier 3", range: "150/1 – 250/1", max: 2 },
+  4: { label: "Tier 4", range: "300/1 – 2500/1", max: 1 },
+};
+
+// Full field with tier assignments
+const FIELD = [
+  // Tier 1
+  {name:"Scottie Scheffler",tier:1},{name:"Bryson DeChambeau",tier:1},{name:"Jon Rahm",tier:1},
+  {name:"Rory McIlroy",tier:1},{name:"Ludvig Aberg",tier:1},{name:"Xander Schauffele",tier:1},
+  {name:"Matt Fitzpatrick",tier:1},{name:"Cameron Young",tier:1},{name:"Tommy Fleetwood",tier:1},
+  {name:"Robert MacIntyre",tier:1},{name:"Justin Rose",tier:1},{name:"Patrick Reed",tier:1},
+  {name:"Hideki Matsuyama",tier:1},{name:"Brooks Koepka",tier:1},{name:"Collin Morikawa",tier:1},
+  {name:"Jordan Spieth",tier:1},{name:"Min Woo Lee",tier:1},{name:"Akshay Bhatia",tier:1},
+  {name:"Chris Gotterup",tier:1},{name:"Russell Henley",tier:1},{name:"Viktor Hovland",tier:1},
+  // Tier 2
+  {name:"Adam Scott",tier:2},{name:"Sepp Straka",tier:2},{name:"Shane Lowry",tier:2},
+  {name:"Si Woo Kim",tier:2},{name:"Jake Knapp",tier:2},{name:"Jason Day",tier:2},
+  {name:"Patrick Cantlay",tier:2},{name:"Jacob Bridgeman",tier:2},{name:"Justin Thomas",tier:2},
+  {name:"Corey Conners",tier:2},{name:"Marco Penge",tier:2},{name:"Nicolai Hojgaard",tier:2},
+  {name:"Sam Burns",tier:2},{name:"Tyrrell Hatton",tier:2},{name:"Cameron Smith",tier:2},
+  {name:"Gary Woodland",tier:2},{name:"Harris English",tier:2},{name:"J.J. Spaun",tier:2},
+  {name:"Maverick McNealy",tier:2},{name:"Sungjae Im",tier:2},{name:"Daniel Berger",tier:2},{name:"Max Homa",tier:2},
+  // Tier 3
+  {name:"Ben Griffin",tier:3},{name:"Brian Harman",tier:3},{name:"Aaron Rai",tier:3},
+  {name:"Alex Noren",tier:3},{name:"Casey Jarvis",tier:3},{name:"Kurt Kitayama",tier:3},
+  {name:"Rasmus Hojgaard",tier:3},{name:"Wyndham Clark",tier:3},{name:"Dustin Johnson",tier:3},
+  {name:"Keegan Bradley",tier:3},{name:"Ryan Fox",tier:3},{name:"Ryan Gerard",tier:3},
+  {name:"Sergio Garcia",tier:3},{name:"Aldrich Potgieter",tier:3},{name:"Haotong Li",tier:3},
+  {name:"Harry Hall",tier:3},{name:"Johnny Keefer",tier:3},{name:"Matt McCarty",tier:3},
+  {name:"Max Greyserman",tier:3},{name:"Michael Kim",tier:3},{name:"Nico Echavarria",tier:3},
+  {name:"Rasmus Neergaard-Petersen",tier:3},{name:"Tom McKibbin",tier:3},
+  // Tier 4
+  {name:"Andrew Novak",tier:4},{name:"Carlos Ortiz",tier:4},{name:"Nick Taylor",tier:4},
+  {name:"Sam Stevens",tier:4},{name:"Sami Valimaki",tier:4},{name:"Kristoffer Reitan",tier:4},
+  {name:"Bubba Watson",tier:4},{name:"Davis Riley",tier:4},{name:"Michael Brennan",tier:4},
+  {name:"Brian Campbell",tier:4},{name:"Charl Schwartzel",tier:4},{name:"Danny Willett",tier:4},
+  {name:"Zach Johnson",tier:4},{name:"Naoyuki Kataoka",tier:4},{name:"Ethan Fang",tier:4},
+  {name:"Mason Howell",tier:4},{name:"Angel Cabrera",tier:4},{name:"Brandon Holtz",tier:4},
+  {name:"Fifa Laopakdee",tier:4},{name:"Jackson Herrington",tier:4},{name:"Fred Couples",tier:4},
+  {name:"Mateo Pulcini",tier:4},{name:"Mike Weir",tier:4},{name:"Vijay Singh",tier:4},
+  {name:"Jose Maria Olazabal",tier:4},
+];
+
+let db;
+let golfers = {}; // name -> {score, status, tier}
+let entries = {}; // name -> {picks:[]}
+
+// Init golfers from FIELD (score=0, active by default)
+function initGolfers() {
+  FIELD.forEach(f => {
+    if (!golfers[f.name]) golfers[f.name] = { score: 0, status: 'active', tier: f.tier };
+  });
+}
+initGolfers();
+
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  setStatus('connected', 'Live — syncing in real time');
+
+  onSnapshot(collection(db, 'golfers'), snap => {
+    snap.forEach(d => {
+      const base = FIELD.find(f => f.name === d.id);
+      golfers[d.id] = { score: 0, status: 'active', tier: base ? base.tier : 1, ...d.data() };
+    });
+    // ensure all field golfers exist
+    FIELD.forEach(f => { if (!golfers[f.name]) golfers[f.name] = { score: 0, status: 'active', tier: f.tier }; });
+    render();
+  }, () => { setStatus('error', 'Connection error'); });
+
+  onSnapshot(collection(db, 'entries'), snap => {
+    entries = {};
+    snap.forEach(d => { entries[d.id] = d.data(); });
+    render();
+  });
+} catch(e) {
+  setStatus('error', 'Firebase error — check console');
+}
+
+function setStatus(state, msg) {
+  document.getElementById('status-dot').className = 'status-dot ' + state;
+  document.getElementById('status-text').textContent = msg;
+}
+
+function fmtScore(s) {
+  if (s === 0) return '<span class="score-even">E</span>';
+  if (s < 0) return `<span class="score-under">${s}</span>`;
+  return `<span class="score-over">+${s}</span>`;
+}
+
+function entryResult(entry) {
+  const active = (entry.picks || []).map(p => {
+    const g = golfers[p];
+    return g && g.status === 'active' ? g.score : null;
+  }).filter(s => s !== null).sort((a, b) => a - b);
+  const best4 = active.slice(0, 4);
+  return { total: best4.reduce((a, b) => a + b, 0), used: best4.length };
+}
+
+function render() {
+  renderLeaderboard();
+  const activeTab = document.querySelector('.tab-content.active');
+  if (activeTab && activeTab.id === 'tab-entries') renderEntries();
+  if (activeTab && activeTab.id === 'tab-golfers') renderGolfers();
+}
+
+function renderLeaderboard() {
+  const sorted = Object.entries(entries)
+    .map(([name, e]) => ({ name, ...entryResult(e), picks: e.picks || [] }))
+    .sort((a, b) => a.total - b.total);
+
+  document.getElementById('m-entries').textContent = sorted.length;
+  document.getElementById('m-golfers').textContent = Object.keys(golfers).length;
+  if (sorted.length) {
+    document.getElementById('m-leader').textContent = sorted[0].name;
+    document.getElementById('m-score').innerHTML = fmtScore(sorted[0].total);
+  } else {
+    document.getElementById('m-leader').textContent = '—';
+    document.getElementById('m-score').textContent = '—';
+  }
+
+  const body = document.getElementById('lb-body');
+  if (!sorted.length) { body.innerHTML = '<tr><td colspan="3" class="empty">No entries yet</td></tr>'; return; }
+
+  body.innerHTML = sorted.map((e, i) => {
+    const chips = e.picks.map(p => {
+      const g = golfers[p];
+      const s = g ? (g.score === 0 ? 'E' : g.score > 0 ? '+' + g.score : g.score) : '?';
+      const t = g ? g.tier : 1;
+      const cls = !g ? '' : g.status === 'active' ? 'active' : 'cut';
+      return `<span class="pick-chip ${cls}"><span class="tier-badge tier-${t}" style="font-size:9px;padding:1px 5px">T${t}</span>${p} (${s})</span>`;
+    }).join('');
+    return `<tr class="${i === 0 ? 'leader-row' : ''}">
+      <td class="rank-num">${i + 1}</td>
+      <td><div style="font-weight:500">${e.name}</div><div class="picks-row">${chips}</div></td>
+      <td style="text-align:right;white-space:nowrap">${fmtScore(e.total)} <span style="font-size:11px;color:var(--text-muted)">(${e.used} picks)</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEntries() {
+  const list = document.getElementById('entries-list');
+  const eArr = Object.entries(entries);
+  if (!eArr.length) { list.innerHTML = '<div class="empty">No entries yet. Add one above.</div>'; return; }
+
+  list.innerHTML = eArr.map(([name, e]) => {
+    const picks = e.picks || [];
+
+    // tier pick counts
+    const tierCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    picks.forEach(p => { const g = golfers[p]; if (g) tierCounts[g.tier]++; });
+
+    const pickRows = picks.map((p, pi) => {
+      const g = golfers[p];
+      const s = g ? (g.score === 0 ? 'E' : g.score > 0 ? '+' + g.score : g.score) : '?';
+      const t = g ? g.tier : '?';
+      return `<div class="entry-pick-row">
+        <span><span class="tier-badge tier-${t}">T${t}</span> ${p} <span style="color:var(--text-muted);font-size:12px">(${s}${g && g.status !== 'active' ? ' · ' + g.status.toUpperCase() : ''})</span></span>
+        <button class="btn btn-danger" onclick="removePick('${esc(name)}','${esc(p)}')">Remove</button>
+      </div>`;
+    }).join('');
+
+    // Build tier pick selectors
+    const tierSelectors = [1, 2, 3, 4].map(t => {
+      const tier = TIERS[t];
+      const remaining = tier.max - tierCounts[t];
+      const available = FIELD.filter(f => f.tier === t && !picks.includes(f.name))
+        .map(f => {
+          const g = golfers[f.name] || {};
+          const s = g.score === undefined ? '' : (g.score === 0 ? 'E' : g.score > 0 ? '+' + g.score : g.score);
+          return `<option value="${esc(f.name)}">${f.name}${s ? ' (' + s + ')' : ''}</option>`;
+        }).join('');
+
+      if (remaining <= 0) return `<div style="font-size:12px;color:var(--text-muted);padding:4px 0"><span class="tier-badge tier-${t}">T${t}</span> ${tier.label} complete ✓</div>`;
+      return `<div style="margin-bottom:8px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px"><span class="tier-badge tier-${t}">T${t}</span> ${remaining} pick${remaining > 1 ? 's' : ''} remaining</div>
+        <div class="form-row">
+          <select id="psel-${esc(name)}-${t}" style="flex:1;min-width:160px"><option value="">— ${tier.label} golfer —</option>${available}</select>
+          <button class="btn btn-green" onclick="addPick('${esc(name)}',${t})">Add</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    const totalPicks = picks.length;
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="card-title" style="margin:0">${name} <span style="font-size:12px;font-weight:400;color:var(--text-muted)">${totalPicks}/8 picks</span></div>
+        <button class="btn btn-danger" onclick="removeEntry('${esc(name)}')">Remove entry</button>
+      </div>
+      ${pickRows || '<div style="font-size:13px;color:var(--text-muted);padding:6px 0">No picks yet</div>'}
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--cream-dark)">${tierSelectors}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderGolfers() {
+  const container = document.getElementById('golfer-tiers');
+  if (!container) return;
+
+  const byTier = {1:[],2:[],3:[],4:[]};
+  FIELD.forEach(f => {
+    const g = golfers[f.name] || { score: 0, status: 'active', tier: f.tier };
+    byTier[f.tier].push({ name: f.name, ...g });
+  });
+
+  container.innerHTML = [1,2,3,4].map(t => {
+    const rows = byTier[t].map(g => {
+      const id = cssId(g.name);
+      const badgeCls = g.status === 'active' ? 'badge-active' : g.status === 'cut' ? 'badge-cut' : 'badge-wd';
+      return `<tr>
+        <td style="font-size:13px">${g.name}</td>
+        <td style="width:100px">
+          <input type="number" id="score-${id}" value="${g.score}"
+            style="width:80px;padding:5px 8px;font-size:13px;text-align:center"
+            onchange="markDirty('${esc(g.name)}')" />
+        </td>
+        <td style="width:110px">
+          <select id="status-${id}" onchange="markDirty('${esc(g.name)}')"
+            style="font-size:12px;padding:5px 6px;width:100px">
+            <option value="active" ${g.status==='active'?'selected':''}>Active</option>
+            <option value="cut" ${g.status==='cut'?'selected':''}>Cut</option>
+            <option value="wd" ${g.status==='wd'?'selected':''}>WD</option>
+          </select>
+        </td>
+        <td style="width:60px;text-align:center">
+          <span id="dirty-${id}" style="font-size:11px;color:var(--gold);display:none">unsaved</span>
+          <span id="saved-${id}" style="font-size:11px;color:var(--under);display:none">✓</span>
+        </td>
+      </tr>`;
+    }).join('');
+
+    return `<div style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="tier-badge tier-${t}" style="font-size:12px;padding:3px 10px">Tier ${t}</span>
+        <span style="font-size:13px;color:var(--text-muted)">${TIERS[t].range}</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Golfer</th><th>Score</th><th>Status</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+const dirtyGolfers = new Set();
+
+window.markDirty = function(name) {
+  dirtyGolfers.add(name);
+  const id = cssId(name);
+  const d = document.getElementById('dirty-' + id);
+  const s = document.getElementById('saved-' + id);
+  if (d) d.style.display = 'inline';
+  if (s) s.style.display = 'none';
+  document.getElementById('save-status').textContent = `${dirtyGolfers.size} unsaved change${dirtyGolfers.size>1?'s':''}`;
+};
+
+window.saveAllScores = async function() {
+  const btn = document.querySelector('[onclick="saveAllScores()"]');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  const toSave = dirtyGolfers.size > 0 ? [...dirtyGolfers] : FIELD.map(f => f.name);
+
+  for (const name of toSave) {
+    const id = cssId(name);
+    const scoreEl = document.getElementById('score-' + id);
+    const statusEl = document.getElementById('status-' + id);
+    if (!scoreEl || !statusEl) continue;
+    const score = parseInt(scoreEl.value);
+    const status = statusEl.value;
+    if (isNaN(score)) continue;
+    const base = FIELD.find(f => f.name === name);
+    const tier = base ? base.tier : 1;
+    if (db) await setDoc(doc(db, 'golfers', name), { score, status, tier });
+    else { golfers[name] = { score, status, tier }; }
+    const d = document.getElementById('dirty-' + id);
+    const s = document.getElementById('saved-' + id);
+    if (d) d.style.display = 'none';
+    if (s) { s.style.display = 'inline'; setTimeout(()=>{ s.style.display='none'; }, 2000); }
+  }
+
+  dirtyGolfers.clear();
+  btn.textContent = 'Save all scores';
+  btn.disabled = false;
+  document.getElementById('save-status').textContent = 'All saved ✓';
+  setTimeout(() => { document.getElementById('save-status').textContent = ''; }, 3000);
+  if (!db) render();
+};
+
+function cssId(name) { return name.replace(/[^a-zA-Z0-9]/g, '_'); }
+window.addEntry = async function () {
+  const n = document.getElementById('entry-name').value.trim();
+  if (!n) return;
+  if (entries[n]) { alert('Name already exists'); return; }
+  if (db) await setDoc(doc(db, 'entries', n), { picks: [] });
+  else { entries[n] = { picks: [] }; renderEntries(); }
+  document.getElementById('entry-name').value = '';
+};
+
+window.removeEntry = async function (name) {
+  if (!confirm(`Remove ${name}?`)) return;
+  if (db) await deleteDoc(doc(db, 'entries', name));
+  else { delete entries[name]; render(); }
+};
+
+window.addPick = async function (entryName, tier) {
+  const sel = document.getElementById(`psel-${entryName}-${tier}`);
+  if (!sel || !sel.value) return;
+  const e = entries[entryName] || { picks: [] };
+  const picks = e.picks || [];
+  // Validate tier limit
+  const tierCount = picks.filter(p => golfers[p] && golfers[p].tier === tier).length;
+  if (tierCount >= TIERS[tier].max) { alert(`Tier ${tier} is full`); return; }
+  const newPicks = [...picks, sel.value];
+  if (db) await setDoc(doc(db, 'entries', entryName), { picks: newPicks });
+  else { entries[entryName].picks = newPicks; render(); }
+};
+
+window.removePick = async function (entryName, golferName) {
+  const e = entries[entryName];
+  if (!e) return;
+  const picks = (e.picks || []).filter(p => p !== golferName);
+  if (db) await setDoc(doc(db, 'entries', entryName), { picks });
+  else { entries[entryName].picks = picks; render(); }
+};
+
+
+
+window.showTab = function (id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const tabs = ['leaderboard', 'entries', 'golfers', 'rules'];
+  document.querySelectorAll('nav button')[tabs.indexOf(id)].classList.add('active');
+  if (id === 'entries') renderEntries();
+  if (id === 'golfers') renderGolfers();
+};
+
+function esc(s) { return String(s).replace(/'/g, "\\'"); }
+
+render();
+</script>
+</body>
+</html>
