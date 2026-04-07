@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Masters Pool 2025</title>
+<title>Beta Masters Pool 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -152,9 +152,9 @@
 <body>
 
 <header>
-  <div class="header-eyebrow">Augusta National &bull; April 2025</div>
-  <h1>Masters Pool</h1>
-  <div class="header-sub">Pick 8 &bull; Best 4 count &bull; Live sync</div>
+  <div class="header-eyebrow">Augusta National &bull; April 2026</div>
+  <h1>Beta Masters Pool</h1>
+  <div class="header-sub">Pick 8 &bull; Best 5 count &bull; Live sync</div>
 </header>
 
 <div class="status-bar">
@@ -182,11 +182,11 @@
     <div class="section-title">Standings</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th style="width:36px">#</th><th>Participant</th><th style="text-align:right">Best 4 score</th></tr></thead>
+        <thead><tr><th style="width:36px">#</th><th>Participant</th><th style="text-align:right">Best 5 score</th></tr></thead>
         <tbody id="lb-body"><tr><td colspan="3" class="loading">Loading…</td></tr></tbody>
       </table>
     </div>
-    <p class="hint" style="margin-top:12px">Scoring: best 4 of 8 picks count. Cut/WD golfers are excluded from scoring.</p>
+    <p class="hint" style="margin-top:12px">Scoring: best 5 of 8 picks count. Cut/WD golfers score +8.</p>
   </div>
 
   <!-- ENTRIES -->
@@ -197,7 +197,7 @@
         <input type="text" id="entry-name" placeholder="Name" style="width:200px" />
         <button class="btn btn-green" onclick="addEntry()">Add</button>
       </div>
-      <p class="hint">Pick 3 from Tier 1, 2 from Tier 2, 2 from Tier 3, 1 from Tier 4. Best 4 scores count.</p>
+      <p class="hint">Pick 3 from Tier 1, 2 from Tier 2, 2 from Tier 3, 1 from Tier 4. Best 5 scores count.</p>
     </div>
     <div class="section-title">All entries</div>
     <div id="entries-list"><div class="loading">Loading…</div></div>
@@ -225,7 +225,7 @@
     <div class="card">
       <div class="card-title">How the pool works</div>
       <p style="font-size:14px;line-height:1.9;color:var(--text-mid)">
-        Each participant picks <strong>8 golfers</strong> across 4 tiers. Their <strong>best 4 scores</strong> count toward the final total. Golfers who miss the cut or withdraw score nothing. <strong>Lowest total wins.</strong>
+        Each participant picks <strong>8 golfers</strong> across 4 tiers. Their <strong>best 4 scores</strong> count toward the final total. Golfers who miss the cut or withdraw score <strong>+8</strong>. <strong>Lowest total wins.</strong>
       </p>
       <br/>
       <table style="font-size:13px;box-shadow:none;border:1px solid var(--cream-dark)">
@@ -353,9 +353,9 @@ function fmtScore(s) {
 function entryResult(entry) {
   const active = (entry.picks || []).map(p => {
     const g = golfers[p];
-    return g && g.status === 'active' ? g.score : null;
+    return g ? (g.status === 'active' ? g.score : 8) : null;
   }).filter(s => s !== null).sort((a, b) => a - b);
-  const best4 = active.slice(0, 4);
+  const best4 = active.slice(0, 5);
   return { total: best4.reduce((a, b) => a + b, 0), used: best4.length };
 }
 
