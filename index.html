@@ -209,12 +209,9 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
           <div class="card-title" style="margin-bottom:4px">Quick score editor</div>
-          <p class="hint" style="margin:0">Edit scores inline — click Save all to push updates to everyone.</p>
+          <p class="hint" style="margin:0">Changes save automatically — updates sync to everyone instantly.</p>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span id="save-status" style="font-size:12px;color:var(--text-muted)"></span>
-          <button class="btn btn-green" onclick="saveAllScores()">Save all scores</button>
-        </div>
+        <span id="save-status" style="font-size:12px;color:var(--text-muted)"></span>
       </div>
     </div>
     <div id="golfer-tiers"></div>
@@ -474,10 +471,10 @@ function renderGolfers() {
         <td style="width:100px">
           <input type="number" id="score-${id}" value="${g.score}"
             style="width:80px;padding:5px 8px;font-size:13px;text-align:center"
-            onchange="markDirty('${esc(g.name)}')" />
+            onchange="autoSave('${esc(g.name)}')" />
         </td>
         <td style="width:110px">
-          <select id="status-${id}" onchange="markDirty('${esc(g.name)}')"
+          <select id="status-${id}" onchange="autoSave('${esc(g.name)}')"
             style="font-size:12px;padding:5px 6px;width:100px">
             <option value="active" ${g.status==='active'?'selected':''}>Active</option>
             <option value="cut" ${g.status==='cut'?'selected':''}>Cut</option>
@@ -485,8 +482,7 @@ function renderGolfers() {
           </select>
         </td>
         <td style="width:60px;text-align:center">
-          <span id="dirty-${id}" style="font-size:11px;color:var(--gold);display:none">unsaved</span>
-          <span id="saved-${id}" style="font-size:11px;color:var(--under);display:none">✓</span>
+          <span id="saved-${id}" style="font-size:11px;display:none"></span>
         </td>
       </tr>`;
     }).join('');
@@ -506,49 +502,37 @@ function renderGolfers() {
   }).join('');
 }
 
-const dirtyGolfers = new Set();
+const saveTimers = {};
 
-window.markDirty = function(name) {
-  dirtyGolfers.add(name);
+window.autoSave = async function(name) {
   const id = cssId(name);
-  const d = document.getElementById('dirty-' + id);
-  const s = document.getElementById('saved-' + id);
-  if (d) d.style.display = 'inline';
-  if (s) s.style.display = 'none';
-  document.getElementById('save-status').textContent = `${dirtyGolfers.size} unsaved change${dirtyGolfers.size>1?'s':''}`;
-};
+  const statusEl = document.getElementById('save-status');
 
-window.saveAllScores = async function() {
-  const btn = document.querySelector('[onclick="saveAllScores()"]');
-  btn.textContent = 'Saving…';
-  btn.disabled = true;
+  // Show saving indicator on the row
+  const savedEl = document.getElementById('saved-' + id);
+  if (savedEl) { savedEl.textContent = '…'; savedEl.style.display = 'inline'; savedEl.style.color = 'var(--text-muted)'; }
 
-  const toSave = dirtyGolfers.size > 0 ? [...dirtyGolfers] : FIELD.map(f => f.name);
-
-  for (const name of toSave) {
-    const id = cssId(name);
+  // Debounce — wait 600ms after last keystroke before firing
+  clearTimeout(saveTimers[name]);
+  saveTimers[name] = setTimeout(async () => {
     const scoreEl = document.getElementById('score-' + id);
-    const statusEl = document.getElementById('status-' + id);
-    if (!scoreEl || !statusEl) continue;
+    const statusSelectEl = document.getElementById('status-' + id);
+    if (!scoreEl || !statusSelectEl) return;
     const score = parseInt(scoreEl.value);
-    const status = statusEl.value;
-    if (isNaN(score)) continue;
+    const status = statusSelectEl.value;
+    if (isNaN(score)) return;
     const base = FIELD.find(f => f.name === name);
     const tier = base ? base.tier : 1;
-    if (db) await setDoc(doc(db, 'golfers', name), { score, status, tier });
-    else { golfers[name] = { score, status, tier }; }
-    const d = document.getElementById('dirty-' + id);
-    const s = document.getElementById('saved-' + id);
-    if (d) d.style.display = 'none';
-    if (s) { s.style.display = 'inline'; setTimeout(()=>{ s.style.display='none'; }, 2000); }
-  }
-
-  dirtyGolfers.clear();
-  btn.textContent = 'Save all scores';
-  btn.disabled = false;
-  document.getElementById('save-status').textContent = 'All saved ✓';
-  setTimeout(() => { document.getElementById('save-status').textContent = ''; }, 3000);
-  if (!db) render();
+    try {
+      if (db) await setDoc(doc(db, 'golfers', name), { score, status, tier });
+      else { golfers[name] = { score, status, tier }; render(); }
+      if (savedEl) { savedEl.textContent = '✓'; savedEl.style.color = 'var(--under)'; setTimeout(() => { savedEl.style.display = 'none'; }, 2000); }
+      if (statusEl) { statusEl.textContent = 'Saved'; setTimeout(() => { statusEl.textContent = ''; }, 2000); }
+    } catch(e) {
+      if (savedEl) { savedEl.textContent = '!'; savedEl.style.color = 'var(--red)'; }
+      if (statusEl) statusEl.textContent = 'Save failed — check connection';
+    }
+  }, 600);
 };
 
 function cssId(name) { return name.replace(/[^a-zA-Z0-9]/g, '_'); }
